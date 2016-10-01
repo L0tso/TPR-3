@@ -1,0 +1,40 @@
+Stack #1
+NFA : Interations:   20   Containers count:  15
+FFA : Interations:   97   Containers count:  14
+WFA : Interations:  113   Containers count:  14
+BFA : Interations:  135   Containers count:  14
+Stack #2
+NFA : Interations:   20   Containers count:  12
+FFA : Interations:   61   Containers count:  11
+WFA : Interations:   77   Containers count:  11
+BFA : Interations:   96   Containers count:  11
+Stack #3
+NFA : Interations:   20   Containers count:  17
+FFA : Interations:   89   Containers count:  14
+WFA : Interations:  106   Containers count:  14
+BFA : Interations:  127   Containers count:  13
+Sorted Stack #0
+NFA : Interations:   46   Containers count:  14
+FFA : Interations:  134   Containers count:  13
+WFA : Interations:  156   Containers count:  13
+BFA : Interations:  161   Containers count:  13
+Sorted Stack #1
+NFA : Interations:   46   Containers count:  12
+FFA : Interations:  100   Containers count:  10
+WFA : Interations:  130   Containers count:  10
+BFA : Interations:  129   Containers count:  11
+Sorted Stack #2
+NFA : Interations:   46   Containers count:  14
+FFA : Interations:  132   Containers count:  12
+WFA : Interations:  178   Containers count:  12
+BFA : Interations:  147   Containers count:  13
+Main Stack #
+NFA : Interations:   60   Containers count:  40
+FFA : Interations:  840   Containers count:  34
+WFA : Interations: 1052   Containers count:  34
+BFA : Interations:  867   Containers count:  37
+Sorted Main Stack #
+NFA : Interations:  166   Containers count:  41
+FFA : Interations: 1122   Containers count:  33
+WFA : Interations: 1303   Containers count:  34
+BFA : Interations: 1043   Containers count:  37

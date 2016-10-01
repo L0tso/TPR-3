@@ -14,11 +14,7 @@ public:
 	static int count;
 	vector<int> indexs;
 	bool addItem(Weight item);
-	bool Container::operator < (const Container secondPoint)
-	{
-		return(secondPoint.weight < this->weight);
-	}
-
+	bool operator < (const Container secondPoint);
 	virtual ~Container();
 };
 

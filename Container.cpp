@@ -20,6 +20,12 @@ bool Container::addItem(Weight item)
 	}
 }
 
+bool Container::operator<(const Container secondPoint)
+{
+	return(secondPoint.weight < this->weight);
+}
+
+
 
 Container::~Container()
 {
