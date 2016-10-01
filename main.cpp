@@ -1,84 +1,49 @@
 #include <iostream>
 #include <fstream>
-#include <vector>
+#include "Container.h"
 #include <algorithm>
 #include <cstdlib>
 #include <climits>
 #define CONTAINER_LIMIT 100
-#define WEIGHT_COUNT 15
+#define WEIGHT_COUNT 20
+#define STACK_SIZE 3
 
 using namespace std;
-class Weight {
-	public:
-		int weight;
-		int index;
-};
-
-
-class Container
+int SORTCOUNT;
+void printOut(char* str, vector<Container> containers, int count )
 {
-public:
-	int weight = 0;
-	vector<int> indexs;
-	bool addItem(Weight item);
-	static int count;
-	int index;
-	Container();
-	bool Container::operator < (const Container secondPoint)
-	{
-		return(secondPoint.weight < this->weight);
-	}
-
-};
-int Container::count = 1;
-
-
-Container::Container()
-{
-	index = count;
-	count++;
-	
-};
-
-
-
-
-void NFA(Weight *weights, vector<Container> &containers) {
-	for (size_t i = 0; i < WEIGHT_COUNT;)
-	{
-		if (containers.back().addItem(weights[i]))
-		{
-			i++;
-		}
-		else
-		{
-			
-			containers.push_back(Container());
-			containers.back().addItem(weights[i]);
-			i++;
-
-		}
-
-	}
-	for (size_t i = 0; i < containers.size(); i++)
-	{
-		cout << "Container " << i+1 << " :  ";
-		for (size_t j = 0; j < containers[i].indexs.size(); j++)
-		{
-			cout<<containers[i].indexs[j] << "  ";
-		}
-		cout << endl;
-	}
-
-
+	cout << str <<  "Count:   " << count << endl;
 	/*for (size_t i = 0; i < containers.size(); i++)
 	{
+		cout << "Container " << i + 1 << " :  ";
 		for (size_t j = 0; j < containers[i].indexs.size(); j++)
 		{
 			cout << containers[i].indexs[j] << "  ";
 		}
-	}cout << endl;*/
+		cout << endl;
+	}*/
+	
+}
 
+void NFA(Weight *weights, vector<Container> containers) {
+	int globalCount = 0;
+	for (size_t i = 0; i < WEIGHT_COUNT;)
+	{
+		if (containers.back().addItem(weights[i])) 
+		{	
+			i++;
+			globalCount++;
+		}
+		else
+		{
+			containers.push_back(Container());
+			containers.back().addItem(weights[i]);
+			globalCount++;
+
+			i++;
+		}
+	}
+	printOut("NFA", containers, globalCount);
 
 }
 
@@ -86,10 +51,16 @@ void NFA(Weight *weights, vector<Container> &containers) {
 /* i ітератор по товарам
    j ітератор по контейнерам
 */
-void FFA(Weight *weights, vector<Container> &containers) {
+void FFA(Weight *weights, vector<Container> containers) {
+
+	int globalCount = 0;
 	for (size_t i = 0; i < WEIGHT_COUNT;)
 	{
-		if (containers.back().addItem(weights[i]))	i++;		//якщо є місце в поточному контейнері додаємо та переходимо до іншого
+		if (containers.back().addItem(weights[i]))
+		{
+			i++;													//якщо є місце в поточному контейнері додаємо та переходимо до іншого
+			globalCount++;
+		}							
 		else
 		{
 			bool flag = false;										//Флаг що показує чи додано товар до вже існуючих контейнерів
@@ -98,14 +69,13 @@ void FFA(Weight *weights, vector<Container> &containers) {
 			{
 
 				if (flag == false) {
+					globalCount++;
 					if(!containers.back().addItem(weights[i]));		   //Перевірка останнього 
 						flag = containers[j].addItem(weights[i]);	
 				}			
 				j++;													//перехід до іншого контейнера без створення
 			}
-			if (flag) {													
-				i++;													//перехід до іншого товару
-			}
+			if (flag) i++; 																//перехід до іншого товару		
 			else
 			{
 				containers.push_back(Container());						//створення контейнеру та додавання товару
@@ -116,15 +86,7 @@ void FFA(Weight *weights, vector<Container> &containers) {
 		}
 
 	}
-	for (size_t i = 0; i < containers.size(); i++)
-	{
-		cout << "Container " << i + 1 << " :  ";
-		for (size_t j = 0; j < containers[i].indexs.size(); j++)
-		{
-			cout << containers[i].indexs[j] << "  ";
-		}
-		cout << endl;
-	}
+	printOut("FFA", containers, globalCount);
 
 }
 int findMax(vector<Container> containers) {
@@ -141,54 +103,65 @@ int findMax(vector<Container> containers) {
 	return index;
 
 }
-void WFA(Weight *weights, vector<Container> &containers) {
+void WFA(Weight *weights, vector<Container> containers) {
+	int globalCount = 0;
 	for (size_t i = 0; i < WEIGHT_COUNT;)
 	{
-		if (containers.back().addItem(weights[i]))	i++;		
+		if (containers.back().addItem(weights[i]))
+		{
+			i++;
+			globalCount++;
+		}
 		else
 		{
-			if ( containers[findMax(containers)].addItem(weights[i])) i++;
+			if (containers[findMax(containers)].addItem(weights[i]))
+			{
+				i++;
+				globalCount += containers.size();
+			}
 			else {
+				globalCount += containers.size();
 				containers.push_back(Container());						
 				containers.back().addItem(weights[i]);
 				i++;
 			}
 		}
 	}
-
-	for (size_t i = 0; i < containers.size(); i++)
-	{
-		cout << "Container " << i + 1 << " :  ";
-		for (size_t j = 0; j < containers[i].indexs.size(); j++)
-		{
-			cout << containers[i].indexs[j] << "  ";
-		}
-		cout << endl;
-	}
+	printOut("WFA",containers, globalCount);
 }
-
 void BFA(Weight *weights, vector<Container> containers) {
+	int globalCount = 0;
 	bool flag = false;
 	int j = 0;
 	
 	for (size_t i = 0; i < WEIGHT_COUNT;)
 	{
-		if (containers.back().addItem(weights[i]))	i++;
+		if (containers.back().addItem(weights[i]))
+		{
+			i++;
+			globalCount++;
+		}
 		else {
+			bool flag = false;
 			sort(containers.begin(), containers.end());
+			globalCount += containers.size();
 			while (j < containers.size() - 1)						//перевіряємо чи влазить товар, у інші, уже створені контейнери
 			{
 				
 				if (flag == false) {
 					flag = containers[j].addItem(weights[i]);
+					globalCount++;
 				}
 				j++;													//перехід до іншого контейнера без створення
 			}
-			if (flag) {
+			if (flag)
+			{
 				i++;													//перехід до іншого товару
-			}
+				globalCount++;
+			}									
 			else
 			{
+				globalCount++;
 				containers.push_back(Container());						//створення контейнеру та додавання товару
 				containers.back().addItem(weights[i]);
 				i++;
@@ -196,56 +169,47 @@ void BFA(Weight *weights, vector<Container> containers) {
 			}
 			
 		}
-	for (size_t i = 0; i < containers.size(); i++)
-	{
-		cout << "Container " << containers[i].index << " :  ";
-		for (size_t j = 0; j < containers[i].indexs.size(); j++)
-		{
-			cout << containers[i].indexs[j] << "  ";
-		}
-		cout << endl;
-	}
+	printOut("BFA",containers, globalCount);
 	
 }
 int main() {
 	ifstream inputFileStream("inputs.txt");
 
-	Weight* weights = new Weight[WEIGHT_COUNT];
-	int i = 0;
+	Weight weights [STACK_SIZE][WEIGHT_COUNT];
+	int i = 0; int j=0;
 	while (!inputFileStream.eof())
-	{
+	{	
+		inputFileStream >> weights[i][j].weight;
+		weights[i][j].index = j+1;
+		j++;
+		if(j == 20)
+		{
+			i++;
+			j = 0;
+		}
 		
-		inputFileStream >> weights[i].weight;
-		weights[i].index = i+1;
-		i++;
 	}
-	for (size_t i = 0; i < WEIGHT_COUNT; i++)
+	inputFileStream.close();
+	for (size_t i = 0 ; i < STACK_SIZE; i++)
+	for (size_t j = 0; j < WEIGHT_COUNT; j++)
 	{
-		cout << weights[i].weight << "  " << weights[i].index << endl;
+		cout << weights[i][j].weight << "  " << weights[i][j].index << endl;
 	}
-	
-	vector<Container> containers;
-	containers.resize(1);
+	vector<Container> containers(1);
+	for (size_t i = 0; i < STACK_SIZE; i++)
+	{
+		NFA(weights[i], containers);
+		FFA(weights[i], containers);
+		WFA(weights[i], containers);
+		BFA(weights[i], containers);
+	}
+	for (size_t i = 0; i < STACK_SIZE; i++)
+	{
 
-	
-	//FFA(weights, containers);
-	//WFA(weights, containers);
-	
-	BFA(weights, containers);
+	}
+
 	system("pause");
 }
 
-bool Container::addItem(Weight item)
-{
-	if(weight + item.weight >CONTAINER_LIMIT)
-		{
-			return false;
-		}	
-	else {
-		weight += item.weight;
-		indexs.push_back(item.index);
-		return true;
-	}
-}
 
 
